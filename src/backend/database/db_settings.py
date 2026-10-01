@@ -6,4 +6,4 @@ load_dotenv()
 class DBSettings(BaseSettings):
     DB_URL: str = os.getenv("DB_URL")
 
-settings = DBSettings()
+db_settings = DBSettings()

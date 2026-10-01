@@ -9,7 +9,7 @@ load_dotenv()
 st.set_page_config(
     page_title = "IT Threads",
     page_icon = "💻",
-    layout = "centered",
+    layout = "wide",
 )
 
 # Method to fetch all posts from database
@@ -49,9 +49,8 @@ posts = fetch_posts()
 
 # Listing posts from database
 with posts_container:
-    if type(posts) != list:
-        st.markdown("Nothing here, create a new post!")
-        st.stop()
+    if len(posts) == 0:
+        st.subheader("Nothing here, create a new post!", text_alignment = "center")
     else:
         st.subheader("Posts", text_alignment = "center")
         for post in posts:

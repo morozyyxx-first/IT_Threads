@@ -9,19 +9,19 @@ router = APIRouter(
 
 # Endpoint to get all posts from database and return the list of them
 @router.get("/get_posts", response_model = list[PostSchema])
-def fetch_posts() -> list[PostSchema]:
+async def fetch_posts() -> list[PostSchema]:
     try:
-        if  len(db_repo.get_posts()) == 0:
-            raise HTTPException(status_code=404, detail="Posts not found")
+
+        got_posts = await db_repo.get_posts()
 
         posts = []
 
         # Then refactoring objects
-        for post in db_repo.get_posts():
+        for post in got_posts:
             post_obj = PostSchema(
-                post_owner = post[0],
-                description = post[1],
-                created_at = post[2]
+                post_owner = post.post_owner,
+                description = post.description,
+                created_at = post.created_at
             )
             validated_post = PostSchema.model_validate(post_obj)
             # And adding them do list that will return by endpoint
@@ -33,11 +33,11 @@ def fetch_posts() -> list[PostSchema]:
 
 # Endpoint to add new post into a database
 @router.post("/add_new_post", response_model = NewPostSchema)
-def add_new_post(
+async def add_new_post(
     payload: NewPostSchema
 ) -> NewPostSchema:
     try:
-        db_repo.add_new_post(payload)
+        await db_repo.add_new_post(payload)
         return payload.model_dump()
     except ValueError as e:
         raise HTTPException(status_code=503, detail=str(e))
